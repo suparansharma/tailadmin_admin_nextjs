@@ -3,8 +3,7 @@ import React, { useState } from 'react'
 const SignInComponent = ({ submitForm, setEmail, setPassword, setLoading, loading }) => {
     const [passwordLengthError, setPasswordLengthError] = useState(false);
     const checkPasswordStrength = (password) => {
-        // Implement your password strength check logic here
-        // For example, check if the password has at least 6 characters and 1 capital letter
+        
         const isStrongEnough = password.length >= 6 && /[A-Z]/.test(password);
         return isStrongEnough;
     };
@@ -45,7 +44,7 @@ const SignInComponent = ({ submitForm, setEmail, setPassword, setLoading, loadin
                             type="email"
                             placeholder="Enter your email"
                             className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                           
+                            onChange={e => setEmail(e.target.value)}
                         />
 
                         <span className="absolute right-4 top-4">
@@ -86,7 +85,7 @@ const SignInComponent = ({ submitForm, setEmail, setPassword, setLoading, loadin
                         } bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none ${
                             passwordLengthError ? 'dark:border-red-500' : 'dark:border-form-strokedark'
                         } dark:bg-form-input dark:focus:border-primary`}
-                        onChange={handlePasswordChange}
+                        onChange={e => setPassword(e.target.value)}
                     />
 
   

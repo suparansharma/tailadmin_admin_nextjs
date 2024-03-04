@@ -4,13 +4,62 @@ import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/router";
 import SignInComponent from "../../components/Login";
+import Axios from "@/utils/axios";
+import ToastMessage from "@/components/Toast";
+import { SECURITY_END_POINT } from "@/constants";
+import { post } from "@/helpers/api_helper";
 
 
 const LogIn = () => {
+  const notify = React.useCallback((type, message) => {
+    ToastMessage({ type, message });
+  }, []);
+  const { http, setToken, token } = Axios();
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
 
+  const submitForm = async (event) => {
+
+    // console.log("click",email,password)
+    event.preventDefault();
+    try {
+      const login = await post(SECURITY_END_POINT.login(), {  email: email,password: password });
+      // console.log(login);
+      // return; 
+      setToken(login.data.access_token);
+      notify("success", "successfully Login!");
+
+    } catch (error) {
+      let message;
+      const errorStatus = error?.response?.status;
+      if (errorStatus) {
+        switch (error.response.status) {
+          case 404:
+            message = 'Sorry! the page you are looking for could not be found';
+            break;
+          case 500:
+            message = 'Sorry! something went wrong, please contact our support team';
+            break;
+          case 401:
+            message = 'Invalid credentials';
+            break;
+          default:
+            message = error[1];
+            break;
+        }
+      }
 
 
+      if (!errorStatus && error.code === 'ERR_NETWORK') {
+        message = 'Netword Error!';
+      }
+      notify("error", message);
+    }
+    // console.log("{ phone: phone, password: password }",{ phone: phone, password: password });
+
+  }
 
 
   return (
@@ -183,7 +232,11 @@ const LogIn = () => {
             
 
                     <SignInComponent
-                    
+                      submitForm={submitForm}
+                      setEmail={setEmail}
+                      setPassword={setPassword}
+                      setLoading={setLoading}
+                      loading={loading}
                     />
 
 
